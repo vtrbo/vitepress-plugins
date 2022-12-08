@@ -8,8 +8,10 @@
     "email": "hi@vtrbo.cn"
   },
   "license": "MIT",
-  "homepage": "https://github.com/vtrbo/vitepress-plugins/packages/runcode",
+  "homepage": "https://github.com/vtrbo/vitepress-plugins/tree/main/packages/runcode",
   "keywords": [
+    "vitepress",
+    "vitepress-plugin",
     "vitepress-plugin-runcode"
   ],
   "exports": {
