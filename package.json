@@ -1,0 +1,30 @@
+{
+  "name": "vitepress-plugins-monorepo",
+  "version": "0.0.0",
+  "description": "Victor Bo's Vitepress Plugins.",
+  "author": {
+    "name": "Victor Bo",
+    "email": "hi@vtrbo.cn"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/vtrbo/vitepress-plugins",
+  "scripts": {
+    "dev": "vitepress dev docs --port 5174 --host --open",
+    "build": "pnpm --filter=vitepress-plugin-* run build",
+    "prepare": "pnpm -r run build",
+    "release": "bumpp package.json packages/*/package.json --commit --push --tag && pnpm -r publish --access public"
+  },
+  "devDependencies": {
+    "@vtrbo/eslint-config": "0.1.1",
+    "@vtrbo/ni": "^0.0.5",
+    "@vtrbo/utils": "^0.1.3",
+    "@vue/compiler-sfc": "^3.2.45",
+    "bumpp": "^8.2.1",
+    "eslint": "^8.29.0",
+    "pnpm": "^7.18.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.9.3",
+    "vitepress": "1.0.0-alpha.30",
+    "vitepress-plugin-runcode": "workspace:*"
+  }
+}

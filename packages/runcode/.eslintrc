@@ -1,0 +1,6 @@
+{
+  "extends": "@vtrbo",
+  "rules": {
+    "@typescript-eslint/no-use-before-define": "off"
+  }
+}
