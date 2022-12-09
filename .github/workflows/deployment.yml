@@ -22,7 +22,7 @@ jobs:
         run: nci
 
       - name: Build
-        run: 'nr docs:build'
+        run: 'nr build'
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
