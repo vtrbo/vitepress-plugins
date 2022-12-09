@@ -1,7 +1,7 @@
 {
   "name": "vitepress-plugin-runcode",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Victor Bo's Vitepress Plugins RunCode.",
   "author": {
     "name": "Victor Bo",
