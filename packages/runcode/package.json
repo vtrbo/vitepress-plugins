@@ -30,7 +30,12 @@
   ],
   "scripts": {
     "dev": "nr build --watch",
-    "build": "rimraf dist && vite build"
+    "build": "vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "prepare": "nr build",
+    "release": "bumpp && pnpm publish --access=public"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.2.0",

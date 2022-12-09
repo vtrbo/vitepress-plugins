@@ -1,5 +1,13 @@
 {
   "extends": "@vtrbo",
+  "overrides": [
+    {
+      "files": ["**/*.md/*.*"],
+      "rules": {
+        "@typescript-eslint/semi": "off"
+      }
+    }
+  ],
   "rules": {
     "@typescript-eslint/no-use-before-define": "off"
   }

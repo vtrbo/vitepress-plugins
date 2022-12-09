@@ -40,7 +40,10 @@ export default defineConfig({
 
     nav: getNav(),
 
-    sidebar: getSidebar(),
+    sidebar: {
+      '/guide/': guideSide(),
+      '/plugins/': pluginsSide(),
+    },
   },
 
   markdown: {
@@ -54,13 +57,14 @@ export default defineConfig({
 function getNav() {
   return [
     { text: '指引', link: '/guide/what-is-it', activeMatch: '/guide/' },
+    { text: '插件', link: '/plugins/vitepress-plugin-runcode', activeMatch: '/plugins/' },
   ]
 }
 
 /**
- * @description 侧边栏
+ * @description 基础模块侧边栏
  */
-function getSidebar() {
+function guideSide() {
   return [
     {
       text: '基础',
@@ -68,6 +72,21 @@ function getSidebar() {
       items: [
         { text: '介绍', link: '/guide/what-is-it' },
         { text: '快速上手', link: '/guide/get-started' },
+      ],
+    },
+  ]
+}
+
+/**
+ * @description 插件模块侧边栏
+ */
+function pluginsSide() {
+  return [
+    {
+      text: '插件库',
+      collapsible: false,
+      items: [
+        { text: '运行代码', link: '/plugins/vitepress-plugin-runcode' },
       ],
     },
   ]
