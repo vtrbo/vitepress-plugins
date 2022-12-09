@@ -2,12 +2,8 @@ name: Deployment
 
 on:
   push:
-    branches:
-      - main
-
-  # push:
-  #   tags:
-  #     - 'v*'
+    tags:
+      - 'v*'
 
 jobs:
   deploy:
