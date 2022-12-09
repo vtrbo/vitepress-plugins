@@ -31,7 +31,7 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          cname: utils.vtrbo.cn
+          cname: vitepress.vtrbo.cn
           publish_branch: docs
           publish_dir: ./docs/.vitepress/dist/
           commit_message: Release by
