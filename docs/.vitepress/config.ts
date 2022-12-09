@@ -5,7 +5,7 @@ export default defineConfig({
   title: 'Vitepress Plugins',
   description: 'Victor Bo\'s vitepress plugins base on Vitepress.',
 
-  base: '/docs',
+  base: '/',
   lastUpdated: true,
 
   head: [

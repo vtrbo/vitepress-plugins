@@ -9,13 +9,15 @@
   "license": "MIT",
   "homepage": "https://github.com/vtrbo/vitepress-plugins",
   "scripts": {
-    "dev": "vitepress dev docs --port 5173 --host --open",
-    "build": "vitepress build docs",
-    "build:plugins": "nr --filter=vitepress-plugin-* build",
+    "dev": "nr --filter=vitepress-plugin-* dev",
+    "build": "nr --filter=vitepress-plugin-* build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "release": "nr -r release"
+    "release": "nr -r release",
+    "docs:dev": "nr -C docs dev",
+    "docs:build": "nr -C docs build",
+    "docs:serve": "nr -C docs serve"
   },
   "devDependencies": {
     "@vtrbo/eslint-config": "0.1.1",

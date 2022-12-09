@@ -1,0 +1,8 @@
+{
+  "name": "vitepress-plugins-docs",
+  "scripts": {
+    "dev": "vitepress dev . --port 5173 --host --open",
+    "build": "vitepress build .",
+    "serve": "vitepress serve ."
+  }
+}
