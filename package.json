@@ -15,7 +15,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "prepare": "pnpm -r run build",
-    "release": "bumpp --commit --push --tag && pnpm -r run release"
+    "release": "bumpp package.json packages/*/package.json --commit --push --tag && pnpm -r run release"
   },
   "devDependencies": {
     "@vtrbo/eslint-config": "0.1.1",
