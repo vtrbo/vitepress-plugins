@@ -118,13 +118,14 @@ const handleRun = () => {
   current.message = '[等待结果]：执行中...'
   const sourceCode = getSourceCode()
   // 这里使用的是菜鸟工具的在线运行
-  // node层只是包装了返回值解决跨域问题
   // https://c.runoob.com/compile
   const cnData = {
     url: 'https://tool.runoob.com/compile2.php',
     form: `token=b6365362a90ac2ac7098ba52c13e352b&fileext=${current.languageName}&language=${current.languageCode}&code=${sourceCode}`,
   }
-  useFetch('http://localhost:3000/vitepress-plugins/runcode').post(cnData).json().then((res) => {
+  // node层只是包装了返回值解决跨域问题
+  // https://nginx.vtrbo.cn
+  useFetch('https://nginx.vtrbo.cn/vitepress-plugins/runcode').post(cnData).json().then((res) => {
     if (res.data.value.error) {
       current.message = '[运行错误]：请检查欲运行的代码是否存在错误'
       current.disabled = false
