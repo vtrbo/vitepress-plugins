@@ -9,7 +9,7 @@
   "license": "MIT",
   "homepage": "https://github.com/vtrbo/vitepress-plugins",
   "scripts": {
-    "dev": "vitepress dev docs --port 5173 --host --open",
+    "dev": "vitepress dev docs --port 9999 --host --open",
     "build": "vitepress build docs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

@@ -1,10 +1,6 @@
 <!-- 运行组件模型 -->
 <template>
   <div class="vitepress-plugin-runcode">
-    <!-- <div id="" class="vitepress-plugin-runcode--show">
-      <Component :is="current.component" v-bind="current.attrs" />
-    </div> -->
-
     <div class="vitepress-plugin-runcode--output" v-html="current.message" />
 
     <div class="vitepress-plugin-runcode--operate">
@@ -25,14 +21,18 @@
         </div>
       </div>
 
+      <div class="vitepress-plugin-runcode--operate-center" @click="handleGoTools">
+        感谢菜鸟工具
+      </div>
+
       <div class="vitepress-plugin-runcode--operate-right">
-        <div class="vitepress-plugin-runcode--operate-button" @click="handleRun">
+        <div class="vitepress-plugin-runcode--operate-button" @click="current.disabled ? () => {} : handleRun()">
           <img :src="IconRun">
-          <span class="vitepress-plugin-runcode--operate-tooltip">执行</span>
+          <span class="vitepress-plugin-runcode--operate-tooltip">开始执行</span>
         </div>
         <div class="vitepress-plugin-runcode--operate-button" @click="handleSet">
           <img :src="IconSet">
-          <span class="vitepress-plugin-runcode--operate-tooltip">重置</span>
+          <span class="vitepress-plugin-runcode--operate-tooltip">重置代码</span>
         </div>
       </div>
     </div>
@@ -50,15 +50,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { Component } from 'vue'
 import { onMounted, reactive, ref, watch } from 'vue'
-import { useClipboard } from '@vueuse/core'
-import {
-  // parseComponent,
-  removeHtmlTag,
-  throwError,
-  // ubbToHtml,
-} from './utils'
+import { useClipboard, useFetch } from '@vueuse/core'
+import { removeHtmlTag, throwError } from './utils'
 import IconRun from './icons/run.svg'
 import IconSet from './icons/set.svg'
 import IconCode from './icons/code.svg'
@@ -84,87 +78,61 @@ interface IProps {
   collapsable?: boolean
 }
 
-interface ICurrent {
-  component: Component | null
-  message: string
-  lang: string
-}
-
 const props = withDefaults(defineProps<IProps>(), {
   editable: true,
   initable: true,
   collapsable: true,
 })
 
+enum Language {
+  'ts' = '1001',
+}
+type LanguageName = keyof typeof Language
+type LanguageCode = `${Language}`
+interface ICurrent {
+  disabled: boolean
+  message: string
+  languageName: LanguageName
+  languageCode: LanguageCode
+}
+
 const current = reactive<ICurrent>({
-  component: null,
-  message: '',
-  lang: 'js',
+  disabled: false,
+  message: '[等待执行]：暂无执行结果',
+  languageName: 'ts',
+  languageCode: '1001',
 })
 
 const refSourceCode = ref<HTMLElement>()
 
 onMounted(() => {
   // 初始执行
-  props.initable ? handleRun() : current.message = '[等待执行]：暂无执行结果'
+  props.initable && handleRun()
 })
 
 /**
  * 运行代码
  */
 const handleRun = () => {
+  current.disabled = true
+  current.message = '[等待结果]：执行中...'
   const sourceCode = getSourceCode()
-  switch (current.lang) {
-    case 'js':
-      // eslint-disable-next-line no-case-declarations
-      const outputResult = runJs(sourceCode)
-      current.message = outputResult || ''
-      break
-    // case 'vue':
-    //   runVue(ubbToHtml(sourceCode))
-    //   break
-    default:
-      current.message = '[初始化错误]：目前仅支持JS在线运行'
-      throwError('不支持的运行语言 (Unsupported runtime language).')
-      break
+  // 这里使用的是菜鸟工具的在线运行
+  // node层只是包装了返回值解决跨域问题
+  // https://c.runoob.com/compile
+  const cnData = {
+    url: 'https://tool.runoob.com/compile2.php',
+    form: `token=b6365362a90ac2ac7098ba52c13e352b&fileext=${current.languageName}&language=${current.languageCode}&code=${sourceCode}`,
   }
-}
-
-/**
- * 运行 JS 代码
- * @param sourceCode 源代码
- */
-const runJs = (sourceCode: string): string | undefined => {
-  try {
-    // eslint-disable-next-line no-new-func
-    return new Function(sourceCode)()
-  }
-  catch (e) {
-    current.message = '[运行错误]：代码块需要加 ";" 来表示结束'
-    throwError('请检查是否加了严格的分号 (Please check if a strict semicolon is added).')
-  }
-}
-
-// const runVue = (sourceCode: string) => {
-//   parseComponent(sourceCode)
-// }
-
-// 运行语言
-onMounted(() => {
-  getCodeLanguage()
-})
-
-/**
- * 获取欲执行的语言
- */
-const getCodeLanguage = () => {
-  let language = refSourceCode.value!.querySelector('div[class*=language]')!.className
-  if (!language) {
-    current.message = '[初始化错误]：未能成功加载欲运行的代码'
-    throwError('未找到承载源代码的元素 (Code Dom Not Found).')
-  }
-  language = language.replace('language-', '').replace(' line-numbers-mode', '')
-  current.lang = language
+  useFetch('http://localhost:3000/vitepress-plugins/runcode').post(cnData).json().then((res) => {
+    if (res.data.value.error) {
+      current.message = '[运行错误]：请检查欲运行的代码是否存在错误'
+      current.disabled = false
+      throwError('欲运行的代码错误 (Runtime Code Error).')
+    }
+    current.message = res.data.value.output || '[未获取结果]：请重新点击运行以获取结果'
+    current.disabled = false
+  })
 }
 
 /**
@@ -181,6 +149,26 @@ const getSourceCode = () => {
   return sourceCode
 }
 
+// 运行语言
+onMounted(() => {
+  getCodeLanguage()
+})
+
+/**
+ * 获取欲执行的语言
+ */
+const getCodeLanguage = () => {
+  let language = refSourceCode.value!.querySelector('div[class*=language]')!.className
+  if (!language) {
+    current.message = '[初始化错误]：未能成功加载欲运行的代码'
+    throwError('未找到承载源代码的元素 (Code Dom Not Found).')
+  }
+  language = language.replace('language-', '').replace(' line-numbers-mode', '')
+  language = ['js', 'ts', 'javaScript', 'typeScript'].map(m => m.toLowerCase()).includes(language.toLowerCase()) ? 'ts' : language
+  current.languageName = language as LanguageName
+  current.languageCode = Language[current.languageName]
+}
+
 // 记录最初的代码
 let recordCodeHtml = ''
 onMounted(() => {
@@ -191,7 +179,7 @@ onMounted(() => {
  * 重置代码
  */
 const handleSet = () => {
-  (refSourceCode.value as any).innerHTML = recordCodeHtml
+  refSourceCode.value!.innerHTML = recordCodeHtml
 }
 
 // 代码框高度
@@ -246,6 +234,13 @@ const handleCopy = () => {
     copyTip.value = '复制代码'
   }, 2000)
 }
+
+/**
+ * 跳转到在线工具
+ */
+const handleGoTools = () => {
+  window.open('https://c.runoob.com/compile/')
+}
 </script>
 
 <style lang="scss">
@@ -294,6 +289,12 @@ const handleCopy = () => {
       display: flex;
       justify-content: flex-start;
       align-items: center;
+    }
+
+    .vitepress-plugin-runcode--operate-center {
+      font-size: 10px;
+      color: #707379;
+      cursor: pointer;
     }
 
     .vitepress-plugin-runcode--operate-right {

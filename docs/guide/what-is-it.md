@@ -5,7 +5,7 @@
 ```js
 let a = 8
 
-return a += 1
+console.log(a++)
 ```
 
 </RunCode>

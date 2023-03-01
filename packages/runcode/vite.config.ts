@@ -16,10 +16,9 @@ export default defineConfig({
   ],
   build: {
     target: 'modules',
-    // outDir: 'es',
     minify: true,
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', '@vueuse/core'],
       input: 'src/index.ts',
       output: [
         {
@@ -42,6 +41,5 @@ export default defineConfig({
       entry: './index.ts',
       formats: ['es', 'cjs'],
     },
-
   },
 })

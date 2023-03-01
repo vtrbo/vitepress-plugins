@@ -35,7 +35,7 @@ export default {
 In your markdown  
 
 ::: warning Tips  
-Running js code online is based on `new Function`, so you need to use ";" specify the end of the code.  
+Running js code online is based on [菜鸟工具](https://c.runoob.com/compile).  
 :::
 
 ````md
@@ -45,7 +45,7 @@ Running js code online is based on `new Function`, so you need to use ";" specif
 const num1 = 8;
 const num2 = 10;
 
-return num1 + num2;
+console.log(num1 + num2)
 ```
 
 </RunCode>
