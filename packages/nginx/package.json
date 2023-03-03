@@ -10,7 +10,7 @@
   "homepage": "https://github.com/vtrbo/vitepress-plugins/tree/main/packages/nginx",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./src/index.js"
+    "start": "node ./src/index.js"
   },
   "devDependencies": {
     "body-parser": "^1.20.2",

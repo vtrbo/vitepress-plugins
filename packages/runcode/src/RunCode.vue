@@ -76,12 +76,19 @@ interface IProps {
    * default true
    */
   collapsable?: boolean
+
+  /**
+   * 依赖项
+   * default ''
+   */
+  dependency?: string
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   editable: true,
   initable: true,
   collapsable: true,
+  dependency: '',
 })
 
 enum Language {
@@ -116,16 +123,16 @@ onMounted(() => {
 const handleRun = () => {
   current.disabled = true
   current.message = '[等待结果]：执行中...'
-  const sourceCode = getSourceCode()
+  const runCode = `${props.dependency}\n${getSourceCode()}`
   // 这里使用的是菜鸟工具的在线运行
   // https://c.runoob.com/compile
   const cnData = {
     url: 'https://tool.runoob.com/compile2.php',
-    form: `token=b6365362a90ac2ac7098ba52c13e352b&fileext=${current.languageName}&language=${current.languageCode}&code=${sourceCode}`,
+    form: `token=b6365362a90ac2ac7098ba52c13e352b&fileext=${current.languageName}&language=${current.languageCode}&code=${runCode}`,
   }
   // node层只是包装了返回值解决跨域问题
   // https://nginx.vtrbo.cn
-  useFetch('https://nginx.vtrbo.cn/vitepress-plugins/runcode').post(cnData).json().then((res) => {
+  useFetch('http://39.105.200.80:9999/vitepress-plugins/runcode').post(cnData).json().then((res) => {
     if (res.data.value.error) {
       current.message = '[运行错误]：请检查欲运行的代码是否存在错误'
       current.disabled = false

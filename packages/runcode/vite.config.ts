@@ -10,7 +10,7 @@ export default defineConfig({
       insertTypesEntry: true,
       copyDtsFiles: false,
       skipDiagnostics: true,
-      rollupTypes: true,
+      cleanVueFileName: true,
       tsConfigFilePath: './tsconfig.json',
     }),
   ],
@@ -23,6 +23,7 @@ export default defineConfig({
       output: [
         {
           format: 'es',
+          exports: 'named',
           entryFileNames: '[name].js',
           preserveModules: true,
           preserveModulesRoot: 'src',
@@ -30,6 +31,7 @@ export default defineConfig({
         },
         {
           format: 'cjs',
+          exports: 'named',
           entryFileNames: '[name].js',
           preserveModules: true,
           preserveModulesRoot: 'src',
@@ -38,8 +40,7 @@ export default defineConfig({
       ],
     },
     lib: {
-      entry: './index.ts',
-      formats: ['es', 'cjs'],
+      entry: 'src/index.ts',
     },
   },
 })
