@@ -32,14 +32,18 @@ importers:
 
   packages/nginx:
     specifiers:
+      '@types/node': ^18.14.6
       body-parser: ^1.20.2
       express: ^4.18.2
       ts-node: ^10.9.1
+      typescript: ^4.9.5
       uuid: ^9.0.0
     devDependencies:
+      '@types/node': 18.14.6
       body-parser: 1.20.2
       express: 4.18.2
       ts-node: 10.9.1_alpjt73dvgv6kni625hu7f2l4m
+      typescript: 4.9.5
       uuid: 9.0.0
 
   packages/runcode:
@@ -908,7 +912,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.1.4_sass@1.58.3
+      vite: 4.1.4_@types+node@18.14.6
       vue: 3.2.47
     dev: true
 

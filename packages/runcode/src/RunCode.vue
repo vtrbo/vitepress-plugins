@@ -149,7 +149,7 @@ const getSourceCode = () => {
     throwError('未找到承载源代码的元素 (Code Dom Not Found).')
   }
   let sourceCode = htmlTags[0].innerHTML
-  sourceCode = removeHtmlTag(sourceCode)
+  sourceCode = removeHtmlTag(sourceCode, true)
   return sourceCode
 }
 
@@ -280,6 +280,7 @@ const handleGoTools = () => {
     border-bottom: 1px solid #dcdfe6;
     font-size: 12px;
     color: #707379;
+    white-space: pre-wrap;
   }
 
   .vitepress-plugin-runcode--operate {
