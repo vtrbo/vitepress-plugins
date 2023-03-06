@@ -34,10 +34,6 @@ export default {
 
 In your markdown  
 
-::: warning Tips  
-Running js code online is based on [菜鸟工具](https://c.runoob.com/compile).  
-:::
-
 ````md
 <RunCode>
 
