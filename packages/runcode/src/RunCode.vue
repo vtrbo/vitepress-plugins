@@ -21,9 +21,7 @@
         </div>
       </div>
 
-      <div class="vitepress-plugin-runcode--operate-center" @click="handleGoTools">
-        感谢菜鸟工具
-      </div>
+      <div class="vitepress-plugin-runcode--operate-center" @click="handleGoTools" />
 
       <div class="vitepress-plugin-runcode--operate-right">
         <div class="vitepress-plugin-runcode--operate-button" @click="current.disabled ? () => {} : handleRun()">
@@ -124,16 +122,14 @@ const handleRun = () => {
   current.disabled = true
   current.message = '[等待结果]：执行中...'
   const runCode = `${props.dependency}\n${getSourceCode()}`
-  // 这里使用的是菜鸟工具的在线运行
-  // https://c.runoob.com/compile
   const cnData = {
-    url: 'https://tool.runoob.com/compile2.php',
-    form: `token=b6365362a90ac2ac7098ba52c13e352b&fileext=${current.languageName}&language=${current.languageCode}&code=${runCode}`,
+    languageCode: current.languageCode,
+    executoryCode: runCode,
   }
-  // node层只是包装了返回值解决跨域问题
-  // https://nginx.vtrbo.cn
+  // node层只是包装了返回值
+  // 代码部分在 packages/nginx
   useFetch('http://39.105.200.80:9999/vitepress-plugins/runcode').post(cnData).json().then((res) => {
-    if (res.data.value.error) {
+    if (res.data.value.status === 'error') {
       current.message = '[运行错误]：请检查欲运行的代码是否存在错误'
       current.disabled = false
       throwError('欲运行的代码错误 (Runtime Code Error).')

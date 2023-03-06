@@ -10,8 +10,6 @@ export default defineConfig({
       insertTypesEntry: true,
       copyDtsFiles: false,
       skipDiagnostics: true,
-      cleanVueFileName: true,
-      tsConfigFilePath: './tsconfig.json',
     }),
   ],
   build: {

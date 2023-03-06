@@ -1,6 +1,7 @@
 const express = require('express')
-const rp = require('request-promise')
 const bp = require('body-parser')
+const uuid = require('uuid')
+const runts = require('./runts')
 
 const app = express()
 
@@ -21,24 +22,19 @@ app.use(bp.json())
 app.use(bp.urlencoded({ extended: false }))
 
 // RunCode的接口转发
-app.post('/vitepress-plugins/runcode', async (req, res) => {
+app.post('/vitepress-plugins/runcode', async (_request, _response) => {
   const start = performance.now()
-  const { url, form } = req.body
 
-  const result = await rp({
-    method: 'POST',
-    uri: url,
-    body: form,
-    json: true,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-  })
+  const filename = uuid.v4()
+  const lang = _request.body.languageCode
+  const code = _request.body.executoryCode
 
-  res.send({
-    error: result.errors.trim(),
-    output: result.output.trim(),
-  })
+  const runMap = {
+    1001: runts.runTs,
+  }
+  const result = await runMap[lang](filename, code)
+  _response.send(result)
+
   const end = performance.now()
   // eslint-disable-next-line no-console
   console.log('[nginx] => RunCode 转发耗时：', `${end - start}ms`)

@@ -2,10 +2,13 @@
 
 <RunCode :editable="true" :initable="true">
 
-```js
-let a = 8
+```ts
+let a: number
+const b = 10
+a = 0
+a++
 
-console.log(a++)
+console.log(a + b)
 ```
 
 </RunCode>
