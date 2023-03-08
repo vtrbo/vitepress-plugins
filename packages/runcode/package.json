@@ -29,8 +29,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "nr build --watch",
-    "build": "vite build",
+    "dev": "nr build --mode development --watch",
+    "build": "vite build --mode production",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",

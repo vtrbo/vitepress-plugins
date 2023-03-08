@@ -128,7 +128,15 @@ const handleRun = () => {
   }
   // node层只是包装了返回值
   // 代码部分在 packages/nginx
-  useFetch('http://39.105.200.80:9999/vitepress-plugins/runcode').post(cnData).json().then((res) => {
+  const ipAddress = import.meta.env.VITE_BUILD_MODE === 'dev' ? 'http://localhost:9999' : 'https://nginx.vtrbo.cn'
+  useFetch(`${ipAddress}/vitepress-plugins/runcode`, {
+    onFetchError(ctx) {
+      if (ctx.data === null)
+        ctx.data = {}
+      ctx.error = new Error('[vitepress-plugin-runcode] => [运行错误]：请检查网络是否畅通')
+      return ctx
+    },
+  }).post(cnData).json().then((res) => {
     if (res.data.value.status === 'error') {
       current.message = '[运行错误]：请检查欲运行的代码是否存在错误'
       current.disabled = false

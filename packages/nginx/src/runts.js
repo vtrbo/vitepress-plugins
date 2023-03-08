@@ -24,23 +24,26 @@ function mkdirSync(path) {
  * @returns {Promise} 运行结果
  */
 const runTs = (fileName, code) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     mkdirSync(sourcePath)
     const jointSource = `${sourcePath}/${fileName}.ts`
     fs.writeFile(jointSource, code, {}, () => {
       exec(`ts-node ${jointSource}`, (_err, output, error) => {
-        // eslint-disable-next-line no-console
-        console.log('[nginx] => RunTs Error', _err, error)
-
-        fs.unlinkSync(jointSource)
+        if (_err) {
+          return resolve({
+            status: 'error',
+            error: _err,
+          })
+        }
 
         if (error) {
-          // eslint-disable-next-line prefer-promise-reject-errors
-          return reject({
+          return resolve({
             status: 'error',
             error,
           })
         }
+
+        fs.unlinkSync(jointSource)
 
         return resolve({
           status: 'success',

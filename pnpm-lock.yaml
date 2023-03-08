@@ -7,27 +7,27 @@ importers:
       '@types/node': ^18.14.6
       '@vtrbo/eslint-config': 0.2.2
       '@vtrbo/ni': ^0.1.0
-      '@vtrbo/utils': ^0.2.2
+      '@vtrbo/utils': ^0.3.0
       '@vue/compiler-sfc': ^3.2.47
       bumpp: ^9.0.0
       eslint: ^8.35.0
-      pnpm: ^7.28.0
-      rimraf: ^4.2.0
+      pnpm: ^7.29.1
+      rimraf: ^4.3.1
       typescript: ^4.9.5
-      vitepress: 1.0.0-alpha.49
+      vitepress: 1.0.0-alpha.50
       vitepress-plugin-runcode: workspace:*
     devDependencies:
       '@types/node': 18.14.6
       '@vtrbo/eslint-config': 0.2.2_ycpbpc6yetojsgtrx3mwntkhsu
       '@vtrbo/ni': 0.1.0
-      '@vtrbo/utils': 0.2.2
+      '@vtrbo/utils': 0.3.0
       '@vue/compiler-sfc': 3.2.47
       bumpp: 9.0.0
       eslint: 8.35.0
-      pnpm: 7.28.0
-      rimraf: 4.2.0
+      pnpm: 7.29.1
+      rimraf: 4.3.1
       typescript: 4.9.5
-      vitepress: 1.0.0-alpha.49_esraev6354xfby62uai2olk4zu
+      vitepress: 1.0.0-alpha.50_esraev6354xfby62uai2olk4zu
       vitepress-plugin-runcode: link:packages/runcode
 
   packages/nginx:
@@ -35,16 +35,16 @@ importers:
       '@types/node': ^18.14.6
       body-parser: ^1.20.2
       express: ^4.18.2
+      nanoid: 3.3.4
       ts-node: ^10.9.1
       typescript: ^4.9.5
-      uuid: ^9.0.0
     devDependencies:
       '@types/node': 18.14.6
       body-parser: 1.20.2
       express: 4.18.2
+      nanoid: 3.3.4
       ts-node: 10.9.1_alpjt73dvgv6kni625hu7f2l4m
       typescript: 4.9.5
-      uuid: 9.0.0
 
   packages/runcode:
     specifiers:
@@ -912,7 +912,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.1.4_@types+node@18.14.6
+      vite: 4.1.4_sass@1.58.3
       vue: 3.2.47
     dev: true
 
@@ -1017,8 +1017,8 @@ packages:
     hasBin: true
     dev: true
 
-  /@vtrbo/utils/0.2.2:
-    resolution: {integrity: sha512-+ViIDq47ZOUe+7gJORkrpE8bcf/IBuG2HC9vE5KlqPnBYSo40ZFQGELv89kAR2aaHZrN9VDXBF++xEe9+ifw0Q==}
+  /@vtrbo/utils/0.3.0:
+    resolution: {integrity: sha512-yg2aEPZBlL1GYbShqngYUGpczAgxO8BQunM6XWIWWWatr4GqriaJK4NIbuJdYCKr67IGp1fu/KGjbtBd+Dn3Pg==}
     dev: true
 
   /@vue/compiler-core/3.2.47:
@@ -3190,8 +3190,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /pnpm/7.28.0:
-    resolution: {integrity: sha512-nbuY07S2519jEjaV9KLjSFmOwh0b6KIViIdc/RCJkgco8SZa2+ikQQe4N3CfNn5By5BH0dKVbZ8Ox1Mw8wItSA==}
+  /pnpm/7.29.1:
+    resolution: {integrity: sha512-dn+65B2XpMIin7sQZvBIJ2Zyx8Z7LK95qyAvgEPE8qXkWYL/LuwpfMfK9Muc7+zNnpPwiQgtGEsxgOtuabFibQ==}
     engines: {node: '>=14.6'}
     hasBin: true
     dev: true
@@ -3379,8 +3379,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rimraf/4.2.0:
-    resolution: {integrity: sha512-tPt+gLORNVqRCk0NwuJ5SlMEcOGvt4CCU8sUPqgCFtCbnoNCTd9Q6vq7JlBbxQlACiH14OR28y7piA2Bak9Sxw==}
+  /rimraf/4.3.1:
+    resolution: {integrity: sha512-GfHJHBzFQra23IxDzIdBqhOWfbtdgS1/dCHrDy+yvhpoJY5TdwdT28oWaHWfRpKFDLd3GZnGTx6Mlt4+anbsxQ==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
@@ -3810,11 +3810,6 @@ packages:
     engines: {node: '>= 0.4.0'}
     dev: true
 
-  /uuid/9.0.0:
-    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
-    hasBin: true
-    dev: true
-
   /v8-compile-cache-lib/3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
     dev: true
@@ -3926,8 +3921,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitepress/1.0.0-alpha.49_esraev6354xfby62uai2olk4zu:
-    resolution: {integrity: sha512-3nUZJow4qL8NHRWYatqqVj45AJDxWst/TuOj+IbQRhxesEswa+Fpwayj9/FxzRzBl665fuiG5y+QeVhOeUm0OA==}
+  /vitepress/1.0.0-alpha.50_esraev6354xfby62uai2olk4zu:
+    resolution: {integrity: sha512-6EdT6JIiHRD7KatKMfxCJ3J7aHlkMp67ZEcfYrMTLKAJ+K+qWs2p427udMHSenCOzVNLIikEC5v/rP3GOGWubQ==}
     hasBin: true
     dependencies:
       '@docsearch/css': 3.3.3

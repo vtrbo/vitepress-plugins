@@ -1,6 +1,6 @@
 const express = require('express')
 const bp = require('body-parser')
-const uuid = require('uuid')
+const { nanoid } = require('nanoid')
 const runts = require('./runts')
 
 const app = express()
@@ -25,7 +25,7 @@ app.use(bp.urlencoded({ extended: false }))
 app.post('/vitepress-plugins/runcode', async (_request, _response) => {
   const start = performance.now()
 
-  const filename = uuid.v4()
+  const filename = nanoid(8)
   const lang = _request.body.languageCode
   const code = _request.body.executoryCode
 
