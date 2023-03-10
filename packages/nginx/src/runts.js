@@ -1,11 +1,11 @@
 const fs = require('fs')
-const { exec } = require('child_process')
+const cp = require('child_process')
 
 const sourcePath = 'temp'
 
 /**
  * 创建文件夹
- * @param {*} path 文件夹路径
+ * @param {string} path 文件夹路径
  */
 function mkdirSync(path) {
   const pathArr = path.split('/')
@@ -28,7 +28,7 @@ const runTs = (fileName, code) => {
     mkdirSync(sourcePath)
     const jointSource = `${sourcePath}/${fileName}.ts`
     fs.writeFile(jointSource, code, {}, () => {
-      exec(`ts-node ${jointSource}`, (_err, output, error) => {
+      cp.exec(`ts-node ${jointSource}`, (_err, output, error) => {
         if (_err) {
           return resolve({
             status: 'error',

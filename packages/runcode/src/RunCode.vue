@@ -1,322 +1,414 @@
 <!-- 运行组件模型 -->
 <template>
-  <div class="vitepress-plugin-runcode">
-    <div class="vitepress-plugin-runcode--output" v-html="current.message" />
+  <div class="VppRuncode">
+    <div class="VppOutput">
+      <div v-if="!output.loading" class="VppOutputCard" v-html="output.result" />
+      <div v-else>
+        <span class="VppOutputLoading" />
+        <span>代码执行中...</span>
+      </div>
+    </div>
 
-    <div class="vitepress-plugin-runcode--operate">
-      <div class="vitepress-plugin-runcode--operate-left">
-        <div class="vitepress-plugin-runcode--operate-button" @click="toggleCode">
+    <div class="VppOperate">
+      <div class="VppOperateLeft">
+        <div class="VppOperateButton" @click="handleToggle">
           <img :src="IconCode">
-          <span class="vitepress-plugin-runcode--operate-tooltip">查看源代码</span>
+          <span class="VppOperateTooltip">查看源代码</span>
         </div>
-        <div class="vitepress-plugin-runcode--operate-button" @click="handleCopy">
+        <div class="VppOperateButton" @click="handleCopy">
           <img :src="IconCopy">
           <span
-            class="vitepress-plugin-runcode--operate-tooltip"
+            class="VppOperateTooltip"
             :style="{
-              color: copyTip === '已复制' ? '#42b883' : '#ffffff',
-              background: copyTip === '已复制' ? '#ffffff' : '#303133',
+              color: tooltip === '已复制' ? '#42b883' : '#ffffff',
+              background: tooltip === '已复制' ? '#ffffff' : '#303133',
             }"
-          >{{ copyTip }}</span>
+          >{{ tooltip }}</span>
         </div>
       </div>
 
-      <div class="vitepress-plugin-runcode--operate-center" @click="handleGoTools" />
+      <div class="VppOperateCenter" />
 
-      <div class="vitepress-plugin-runcode--operate-right">
-        <div class="vitepress-plugin-runcode--operate-button" @click="current.disabled ? () => {} : handleRun()">
+      <div class="VppOperateRight">
+        <div class="VppOperateButton" @click="output.loading ? () => {} : handleRun()">
           <img :src="IconRun">
-          <span class="vitepress-plugin-runcode--operate-tooltip">开始执行</span>
+          <span class="VppOperateTooltip">开始执行</span>
         </div>
-        <div class="vitepress-plugin-runcode--operate-button" @click="handleSet">
+        <div class="VppOperateButton" @click="handleSet">
           <img :src="IconSet">
-          <span class="vitepress-plugin-runcode--operate-tooltip">重置代码</span>
+          <span class="VppOperateTooltip">重置代码</span>
         </div>
       </div>
     </div>
 
-    <div
-      ref="refSourceCode"
-      class="vitepress-plugin-runcode--source vitepress-plugin-runcode--source-transition"
-      :class="{ 'vitepress-plugin-runcode--source-editable': props.editable }"
-      :style="{ 'max-height': codeHeight }"
-      :contentEditable="props.editable"
-    >
+    <div ref="refMirror" class="VppMirror">
+      <div :style="{ height: collapsable ? '0px' : mirror.height }">
+        <Codemirror
+          v-model="mirror.code"
+          :extensions="mirror.theme"
+          :indent-with-tab="true"
+          :tab-size="2"
+          :disabled="!props.editable"
+        />
+      </div>
+    </div>
+
+    <!-- 源码 页面不可见 -->
+    <div ref="refCode" class="VppSource">
       <slot />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref, watch } from 'vue'
+import { nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { Codemirror } from 'vue-codemirror'
+import { javascript } from '@codemirror/lang-javascript'
+import { oneDark } from '@codemirror/theme-one-dark'
 import { useClipboard, useFetch } from '@vueuse/core'
+import { nanoid } from 'nanoid'
 import { removeHtmlTag, throwError } from './utils'
 import IconRun from './icons/run.svg'
 import IconSet from './icons/set.svg'
 import IconCode from './icons/code.svg'
 import IconCopy from './icons/copy.svg'
 
-interface IProps {
+interface RunCodeProps {
   /**
-   * 是否可编辑
-   * default true
+   * 代码运行语言
+   *
+   * default 'ts'
    */
-  editable?: boolean
+  language: 'js' | 'ts'
+
+  /**
+   * 唯一标识
+   *
+   * default 唯一随机8位字符
+   */
+  symbolize?: string
 
   /**
    * 是否初始执行
+   * true执行 false不执行
+   *
    * default true
    */
   initable?: boolean
 
   /**
-   * 是否收起
+   * 是否可编辑
+   * true可编辑 false不可编辑
+   *
+   * default true
+   */
+  editable?: boolean
+
+  /**
+   * 是否收起代码
+   * true收起 false展开
+   *
    * default true
    */
   collapsable?: boolean
 
   /**
-   * 依赖项
+   * 依赖项代码
+   *
    * default ''
    */
   dependency?: string
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  editable: true,
-  initable: true,
-  collapsable: true,
-  dependency: '',
+const props = withDefaults(
+  defineProps<RunCodeProps>(),
+  {
+    language: 'ts',
+    symbolize: '',
+    initable: true,
+    editable: false,
+    collapsable: false,
+    dependency: '',
+  },
+)
+
+/**
+ * 承载代码元素
+ * 仅获取运行代码
+ * 页面不可见
+ */
+const refCode = ref<HTMLElement>()
+
+/**
+ * 代码编辑元素
+ */
+const refMirror = ref<HTMLElement>()
+
+/**
+ * 是否收起代码
+ */
+const collapsable = ref<boolean>(props.collapsable)
+
+/**
+ * 编辑区数据
+ */
+const mirror = ref<{
+  // 代码
+  code: string
+  // 高度
+  height: string
+  // 主题
+  theme: any[]
+}>({
+  code: '',
+  height: '0px',
+  theme: [javascript(), oneDark],
 })
 
-enum Language {
-  'ts' = '1001',
-}
-type LanguageName = keyof typeof Language
-type LanguageCode = `${Language}`
-interface ICurrent {
-  disabled: boolean
-  message: string
-  languageName: LanguageName
-  languageCode: LanguageCode
-}
-
-const current = reactive<ICurrent>({
-  disabled: false,
-  message: '[等待执行]：暂无执行结果',
-  languageName: 'ts',
-  languageCode: '1001',
+/**
+ * 输出数据
+ */
+const output = reactive<{
+  // 加载状态
+  loading: boolean
+  // 运行结果
+  result: string
+}>({
+  loading: false,
+  result: '[等待执行]：目前没有任何执行结果',
 })
 
-const refSourceCode = ref<HTMLElement>()
+/**
+ * 记录数据
+ */
+const record = reactive<{
+  // 代码
+  code: string
+  // 高度
+  height: number
+}>({
+  code: '',
+  height: 0,
+})
 
 onMounted(() => {
-  // 初始执行
+  // 记录代码
+  record.code = getCode()
+  // 设置代码
+  mirror.value.code = record.code
+
+  nextTick(() => {
+    // 记录高度
+    record.height = getHeight()
+    // 计算高度
+    computeHeight()
+  })
+
+  // 初始自动执行
   props.initable && handleRun()
 })
+
+watch(
+  () => collapsable.value,
+  () => {
+    computeHeight()
+  },
+)
+
+/**
+ * 获取代码
+ */
+const getCode = () => {
+  const tags = refCode.value!.getElementsByTagName('pre')
+  if ((tags || []).length) {
+    // 抛出无元素错误
+  }
+  if ((tags || []).length !== 1) {
+    // 抛出元素过多错误
+  }
+  return removeHtmlTag(tags[0].innerHTML, true)
+}
+
+/**
+ * 获取高度
+ */
+const getHeight = () => {
+  const tags = refMirror.value!.getElementsByClassName('cm-editor')
+  if ((tags || []).length) {
+    // 抛出无元素错误
+  }
+  if ((tags || []).length !== 1) {
+    // 抛出元素过多错误
+  }
+  return tags[0].clientHeight
+}
+
+/**
+ * 计算高度
+ */
+const computeHeight = () => {
+  if (collapsable.value)
+    mirror.value.height = '0px'
+  else
+    mirror.value.height = `${record.height + 5}px`
+}
+
+/**
+ * 展开收起源代码
+ */
+const handleToggle = () => {
+  collapsable.value = !collapsable.value
+}
+
+/**
+ * 复制代码
+ */
+const tooltip = ref('复制代码')
+const handleCopy = () => {
+  if (tooltip.value === '已复制')
+    return
+  const { copy } = useClipboard()
+  copy(getCode())
+  tooltip.value = '已复制'
+  setTimeout(() => {
+    tooltip.value = '复制代码'
+  }, 1500)
+}
 
 /**
  * 运行代码
  */
 const handleRun = () => {
-  current.disabled = true
-  current.message = '[等待结果]：执行中...'
-  const runCode = `${props.dependency}\n${getSourceCode()}`
-  const cnData = {
-    languageCode: current.languageCode,
-    executoryCode: runCode,
+  if (output.loading)
+    return
+
+  output.loading = true
+  const params = {
+    symbolize: props.symbolize || nanoid(8),
+    language: props.language,
+    wholdCode: `${props.dependency}\n${mirror.value.code}`,
   }
+
   // node层只是包装了返回值
   // 代码部分在 packages/nginx
   const ipAddress = import.meta.env.VITE_BUILD_MODE === 'dev' ? 'http://localhost:9999' : 'https://nginx.vtrbo.cn'
-  useFetch(`${ipAddress}/vitepress-plugins/runcode`, {
+  useFetch(`${ipAddress}/vps/runcode`, {
     onFetchError(ctx) {
-      if (ctx.data === null)
-        ctx.data = {}
-      ctx.error = new Error('[vitepress-plugin-runcode] => [运行错误]：请检查网络是否畅通')
+      output.result = '[运行错误]：网络连接不畅或其他未知错误'
+      output.loading = false
+      throwError(output.result)
       return ctx
     },
-  }).post(cnData).json().then((res) => {
+  }).post(params).json().then((res) => {
     if (res.data.value.status === 'error') {
-      current.message = '[运行错误]：请检查欲运行的代码是否存在错误'
-      current.disabled = false
-      throwError('欲运行的代码错误 (Runtime Code Error).')
+      output.result = '[运行错误]：请检查代码是否错误'
+      output.loading = false
+      return throwError(output.result)
     }
-    current.message = res.data.value.output || '[未获取结果]：请重新点击运行以获取结果'
-    current.disabled = false
+    output.result = res.data.value.output
+    output.loading = false
   })
 }
-
-/**
- * 获取欲执行的源码
- */
-const getSourceCode = () => {
-  const htmlTags = refSourceCode.value!.getElementsByTagName('pre')
-  if ((htmlTags || []).length < 1) {
-    current.message = '[初始化错误]：未能成功加载欲运行的代码'
-    throwError('未找到承载源代码的元素 (Code Dom Not Found).')
-  }
-  let sourceCode = htmlTags[0].innerHTML
-  sourceCode = removeHtmlTag(sourceCode, true)
-  return sourceCode
-}
-
-// 运行语言
-onMounted(() => {
-  getCodeLanguage()
-})
-
-/**
- * 获取欲执行的语言
- */
-const getCodeLanguage = () => {
-  let language = refSourceCode.value!.querySelector('div[class*=language]')!.className
-  if (!language) {
-    current.message = '[初始化错误]：未能成功加载欲运行的代码'
-    throwError('未找到承载源代码的元素 (Code Dom Not Found).')
-  }
-  language = language.replace('language-', '').replace(' line-numbers-mode', '')
-  language = ['js', 'ts', 'javaScript', 'typeScript'].map(m => m.toLowerCase()).includes(language.toLowerCase()) ? 'ts' : language
-  current.languageName = language as LanguageName
-  current.languageCode = Language[current.languageName]
-}
-
-// 记录最初的代码
-let recordCodeHtml = ''
-onMounted(() => {
-  recordCodeHtml = refSourceCode.value!.innerHTML
-})
 
 /**
  * 重置代码
  */
 const handleSet = () => {
-  refSourceCode.value!.innerHTML = recordCodeHtml
-}
-
-// 代码框高度
-const codeHeight = ref('')
-// 记录的高度
-let recordHeight = 0
-// 收起/展开 true/false
-const panelCollapsable = ref(props.collapsable)
-
-onMounted(() => {
-  // 获取实际高度
-  recordHeight = refSourceCode.value!.clientHeight
-  // 计算展示的高度
-  computeCodeHeight()
-})
-
-watch(
-  () => panelCollapsable.value,
-  () => {
-    computeCodeHeight()
-  },
-)
-
-/**
- * 展开收起源代码
- */
-const toggleCode = () => {
-  panelCollapsable.value = !panelCollapsable.value
-}
-
-/**
- * 调整代码块高度
- */
-const computeCodeHeight = () => {
-  if (panelCollapsable.value)
-    codeHeight.value = '0px'
-  else
-    codeHeight.value = `${recordHeight + 2}px`
-}
-
-// 复制提示
-const copyTip = ref('复制代码')
-
-/**
- * 复制代码
- */
-const handleCopy = () => {
-  const { copy } = useClipboard()
-  copy(getSourceCode())
-  copyTip.value = '已复制'
-  setTimeout(() => {
-    copyTip.value = '复制代码'
-  }, 2000)
-}
-
-/**
- * 跳转到在线工具
- */
-const handleGoTools = () => {
-  window.open('https://c.runoob.com/compile/')
+  mirror.value.code = record.code
 }
 </script>
 
-<style lang="scss">
-.vp-doc div[class*='language-'] {
-  border-radius: 0;
-  margin: 0;
-  position: static;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-
-  .copy {
-    display: none;
-  }
-
-  .shiki {
-    padding: 15px;
-
-    code {
-      padding: 0;
-    }
-  }
-}
-</style>
-
 <style lang="scss" scoped>
-.vitepress-plugin-runcode {
+// 圆角大小
+$radius: 4px;
+
+.VppRuncode {
   background: #ffffff;
   border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  border-radius: $radius;
 
-  .vitepress-plugin-runcode--output {
+  .VppOutput {
     padding: 15px;
     border-bottom: 1px solid #dcdfe6;
     font-size: 12px;
     color: #707379;
-    white-space: pre-wrap;
+
+    .VppOutputCard {
+      white-space: pre-wrap;
+    }
+
+    .VppOutputLoading {
+      display: inline-block;
+      width: 2px;
+      height: 6px;
+      background-color: #707379;
+      position: relative;
+      top: 3px;
+      left: 7px;
+      margin-right: 20px;
+      animation: loading infinite 1s ease-in-out -0.2s;
+    }
+
+    .VppOutputLoading:before,
+    .VppOutputLoading:after {
+      content: '';
+      width: 2px;
+      height: 6px;
+      background-color: #707379;
+      position: absolute;
+    }
+
+    .VppOutputLoading:before {
+      left: -7px;
+      animation: loading infinite 1s ease-in-out -0.4s;
+    }
+
+    .VppOutputLoading:after {
+      right: -7px;
+      animation: loading infinite 1s ease-in-out;
+    }
+
+    @keyframes loading {
+      0%,
+      80%,
+      100% {
+        height: 6px;
+        box-shadow: 0 0 #707379;
+      }
+
+      40% {
+        height: 10px;
+        box-shadow: 0 -10px #707379;
+      }
+    }
   }
 
-  .vitepress-plugin-runcode--operate {
+  .VppOperate {
     padding: 0 15px;
     height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    .vitepress-plugin-runcode--operate-left {
+    .VppOperateLeft {
       display: flex;
       justify-content: flex-start;
       align-items: center;
     }
 
-    .vitepress-plugin-runcode--operate-center {
+    .VppOperateCenter {
       font-size: 10px;
       color: #707379;
       cursor: pointer;
     }
 
-    .vitepress-plugin-runcode--operate-right {
+    .VppOperateRight {
       display: flex;
       justify-content: flex-end;
       align-items: center;
     }
 
-    .vitepress-plugin-runcode--operate-button {
+    .VppOperateButton {
       height: 40px;
       display: flex;
       justify-content: center;
@@ -334,7 +426,7 @@ const handleGoTools = () => {
         height: 18px;
       }
 
-      .vitepress-plugin-runcode--operate-tooltip {
+      .VppOperateTooltip {
         visibility: hidden;
         position: absolute;
         z-index: 2;
@@ -354,54 +446,64 @@ const handleGoTools = () => {
       }
 
       &:hover {
-        .vitepress-plugin-runcode--operate-tooltip {
+        .VppOperateTooltip {
           visibility: visible;
         }
       }
     }
   }
 
-  .vitepress-plugin-runcode--source {
-    outline: none;
+  .VppMirror {
+    background: #282c34;
+    border-bottom-left-radius: $radius;
+    border-bottom-right-radius: $radius;
     overflow: hidden;
-    background: #292d3e;
 
-    &:hover {
-      overflow: auto;
+    & > div {
+      outline: none;
+      overflow: scroll;
+      transition: all 0.25s;
+    }
+
+    :deep(.cm-editor) {
+      padding: 15px 15px 5px !important;
+      font-size: 14px;
+
+      .cm-gutters {
+        display: none;
+      }
     }
   }
 
-  .vitepress-plugin-runcode--source-transition {
-    transition: max-height 0.25s;
-
-    &:hover {
-      max-height: auto;
-    }
+  .VppSource {
+    display: none;
   }
 }
 
-.vitepress-plugin-runcode--source::-webkit-scrollbar {
+.VppMirror > div::-webkit-scrollbar {
   width: 4px;
   height: 4px;
 }
 
-.vitepress-plugin-runcode--source::-webkit-scrollbar-track-piece {
+.VppMirror > div::-webkit-scrollbar-button {
   background-color: #292d3e;
-  border-radius: 4px;
+  border-radius: $radius;
 }
 
-.vitepress-plugin-runcode--source::-webkit-scrollbar-track {
+.VppMirror > div::-webkit-scrollbar-track {
   background-color: #292d3e;
-  border-radius: 4px;
 }
 
-.vitepress-plugin-runcode--source::-webkit-scrollbar-thumb {
+.VppMirror > div::-webkit-scrollbar-track-piece {
+  background-color: #292d3e;
+}
+
+.VppMirror > div::-webkit-scrollbar-thumb {
   background-color: #d4d8e2;
-  border-radius: 4px;
+  border-radius: $radius;
 }
 
-.vitepress-plugin-runcode--source::-webkit-scrollbar-button {
+.VppMirror > div::-webkit-scrollbar-corner {
   background-color: #292d3e;
-  border-radius: 4px;
 }
 </style>

@@ -1,6 +1,5 @@
 const express = require('express')
 const bp = require('body-parser')
-const { nanoid } = require('nanoid')
 const runts = require('./runts')
 
 const app = express()
@@ -22,17 +21,19 @@ app.use(bp.json())
 app.use(bp.urlencoded({ extended: false }))
 
 // RunCode的接口转发
-app.post('/vitepress-plugins/runcode', async (_request, _response) => {
+app.post('/vps/runcode', async (_request, _response) => {
   const start = performance.now()
 
-  const filename = nanoid(8)
-  const lang = _request.body.languageCode
-  const code = _request.body.executoryCode
+  const {
+    symbolize,
+    language,
+    wholdCode,
+  } = _request.body
 
   const runMap = {
-    1001: runts.runTs,
+    ts: runts.runTs,
   }
-  const result = await runMap[lang](filename, code)
+  const result = await runMap[language](symbolize, wholdCode)
   _response.send(result)
 
   const end = performance.now()

@@ -1,6 +1,6 @@
 # What Is It
 
-<RunCode :dependency="`
+<RunCode language="ts" :dependency="`
 function groupBy<T>(list: T[], fn: (single: T) => any): Map<string, T[]> {
   const map = new Map<string, T[]>()
   list.forEach((s: T) => {

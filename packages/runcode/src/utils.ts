@@ -2,8 +2,8 @@
  * 处理异常消息
  * @param message 异常消息
  */
-export const throwError = (message: string): void => {
-  throw new Error(`[vitepress-plugin-runcode]: ${message}`)
+export const throwError = (message: string) => {
+  return new Error(`[vitepress:plugin:runcode]: ${message}`)
 }
 
 /**
@@ -39,4 +39,8 @@ export const removeHtmlTag = (code: string, isUbb?: boolean): string => {
   if (isUbb)
     code = ubbToHtml(code)
   return code.replace(/<\/?[^>]*>/g, '')
+}
+
+export const runTs = (code: string) => {
+
 }
