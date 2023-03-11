@@ -126,8 +126,8 @@ const props = withDefaults(
     language: 'ts',
     symbolize: '',
     initable: true,
-    editable: false,
-    collapsable: false,
+    editable: true,
+    collapsable: true,
     dependency: '',
   },
 )
