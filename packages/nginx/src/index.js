@@ -31,6 +31,7 @@ app.post('/vps/runcode', async (_request, _response) => {
   } = _request.body
 
   const runMap = {
+    js: runts.runTs,
     ts: runts.runTs,
   }
   const result = await runMap[language](symbolize, wholdCode)
