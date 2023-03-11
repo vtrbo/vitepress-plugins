@@ -80,7 +80,7 @@ interface RunCodeProps {
   /**
    * 代码运行语言
    *
-   * default 'ts'
+   * default 'js'
    */
   language: 'js' | 'ts'
 
@@ -126,7 +126,7 @@ interface RunCodeProps {
 const props = withDefaults(
   defineProps<RunCodeProps>(),
   {
-    language: 'ts',
+    language: 'js',
     symbolize: '',
     initable: true,
     editable: true,
@@ -151,6 +151,14 @@ const refMirror = ref<HTMLElement>()
  * 是否收起代码
  */
 const collapsable = ref<boolean>(props.collapsable)
+
+/**
+ * 编辑区主题
+ */
+const themeMap = {
+  js: javascript,
+  ts: javascript,
+}
 
 /**
  * 编辑区数据
@@ -206,6 +214,9 @@ onMounted(() => {
     // 计算高度
     computeHeight()
   })
+
+  // 设置主题
+  mirror.value.theme = [themeMap[props.language](), oneDark]
 
   // 初始自动执行
   props.initable && handleRun()
