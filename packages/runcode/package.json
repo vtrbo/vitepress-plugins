@@ -41,10 +41,10 @@
     "@codemirror/theme-one-dark": "^6.1.1",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vueuse/core": "^9.13.0",
-    "nanoid": "3.3.4",
-    "sass": "^1.58.3",
+    "nanoid": "4.0.1",
+    "sass": "^1.59.2",
     "vite": "^4.1.4",
-    "vite-plugin-dts": "^2.0.2",
+    "vite-plugin-dts": "^2.1.0",
     "vue": "^3.2.47",
     "vue-codemirror": "^6.1.1"
   }

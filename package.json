@@ -20,17 +20,17 @@
     "nginx": "nr -C packages/nginx start"
   },
   "devDependencies": {
-    "@types/node": "^18.14.6",
+    "@types/node": "^18.15.0",
     "@vtrbo/eslint-config": "0.2.2",
     "@vtrbo/ni": "^0.1.0",
     "@vtrbo/utils": "^0.3.0",
     "@vue/compiler-sfc": "^3.2.47",
     "bumpp": "^9.0.0",
-    "eslint": "^8.35.0",
+    "eslint": "^8.36.0",
     "pnpm": "^7.29.1",
-    "rimraf": "^4.3.1",
+    "rimraf": "^4.4.0",
     "typescript": "^4.9.5",
-    "vitepress": "1.0.0-alpha.50",
+    "vitepress": "1.0.0-alpha.51",
     "vitepress-plugin-runcode": "workspace:*"
   }
 }
