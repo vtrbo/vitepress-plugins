@@ -28,7 +28,9 @@ const runTs = (fileName, code) => {
     mkdirSync(sourcePath)
     const jointSource = `${sourcePath}/${fileName}.ts`
     fs.writeFile(jointSource, code, {}, () => {
-      cp.exec(`vite-node ${jointSource}`, (_err, output, error) => {
+      cp.exec(`vite-node ${jointSource}`, {
+        timeout: 5000,
+      }, (_err, output, error) => {
         if (_err) {
           return resolve({
             status: 'error',

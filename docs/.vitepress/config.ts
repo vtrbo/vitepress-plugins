@@ -28,11 +28,6 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/vtrbo/vitepress-plugins' },
     ],
 
-    localeLinks: {
-      text: '简体中文',
-      items: [],
-    },
-
     footer: {
       message: 'Released under the MIT License',
       copyright: 'Copyright © 2022-present Victor Bo',

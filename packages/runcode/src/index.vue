@@ -3,9 +3,12 @@
   <div class="VppRuncode">
     <div class="VppOutput">
       <div v-if="!output.loading" class="VppOutputCard" v-html="output.result" />
-      <div v-else>
-        <span class="VppOutputLoading" />
-        <span>代码执行中...</span>
+      <div v-else class="VppOutputLoading">
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
       </div>
     </div>
 
@@ -338,47 +341,55 @@ $radius: 4px;
     }
 
     .VppOutputLoading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0px;
+      padding: 0px;
+    }
+
+    .VppOutputLoading > span {
+      vertical-align: middle;
+      border-radius: 100%;
       display: inline-block;
-      width: 2px;
-      height: 6px;
-      background-color: #707379;
-      position: relative;
-      top: 3px;
-      left: 7px;
-      margin-right: 20px;
-      animation: loading infinite 1s ease-in-out -0.2s;
+      width: 10px;
+      height: 10px;
+      margin: 3px 2px;
+      animation: loading 0.8s linear infinite alternate;
     }
 
-    .VppOutputLoading:before,
-    .VppOutputLoading:after {
-      content: '';
-      width: 2px;
-      height: 6px;
-      background-color: #707379;
-      position: absolute;
+    .VppOutputLoading > span:nth-child(1) {
+      animation-delay: -1s;
+      background: rgba(112, 115, 121, 0.6);
     }
 
-    .VppOutputLoading:before {
-      left: -7px;
-      animation: loading infinite 1s ease-in-out -0.4s;
+    .VppOutputLoading > span:nth-child(2) {
+      animation-delay: -0.8s;
+      background: rgba(112, 115, 121, 0.8);
     }
 
-    .VppOutputLoading:after {
-      right: -7px;
-      animation: loading infinite 1s ease-in-out;
+    .VppOutputLoading > span:nth-child(3) {
+      animation-delay: -0.26666s;
+      background: rgba(112, 115, 121, 1);
+    }
+
+    .VppOutputLoading > span:nth-child(4) {
+      animation-delay: -0.8s;
+      background: rgba(112, 115, 121, 0.8);
+    }
+
+    .VppOutputLoading > span:nth-child(5) {
+      animation-delay: -1s;
+      background: rgba(112, 115, 121, 0.4);
     }
 
     @keyframes loading {
-      0%,
-      80%,
-      100% {
-        height: 6px;
-        box-shadow: 0 0 #707379;
+      from {
+        transform: scale(0, 0);
       }
 
-      40% {
-        height: 10px;
-        box-shadow: 0 -10px #707379;
+      to {
+        transform: scale(1, 1);
       }
     }
   }
