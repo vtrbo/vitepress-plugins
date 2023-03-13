@@ -26,7 +26,8 @@ const list: Person[] = [
   { name: '小李', age: 4, grade: '中一班' },
 ]
 
-return groupBy(list, (single: Person) => single.grade)
+// return groupBy(list, (single: Person) => single.grade)
+console.log(groupBy(list, (single: Person) => single.grade))
 ```
 
 </RunCode>

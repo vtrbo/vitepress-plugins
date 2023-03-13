@@ -20,11 +20,34 @@ export function tsExecutor(code: string) {
     const compiledCode = transpileOutput.outputText
 
     try {
+      // return 方式
       // eslint-disable-next-line no-new-func
-      const output = new Function(compiledCode)()
+      const returnOutput = new Function(compiledCode)()
+      if (returnOutput) {
+        return {
+          status: 'success',
+          output: stringify(returnOutput),
+        }
+      }
+
+      // console 方式
+      const reConsoleCode = `
+const output = [];
+const reConsole = console.log;
+presetConsoleLog = function() {
+  reConsole.apply(console, arguments);
+  output.push(...arguments);
+};
+
+${compiledCode}  
+
+return output;
+`.replace('console.log(', 'presetConsoleLog(').trim()
+      // eslint-disable-next-line no-new-func
+      const consoleOutputs = new Function(reConsoleCode)()
       return {
         status: 'success',
-        output: stringify(output),
+        output: consoleOutputs.map((m: any) => stringify(m)).join('\n'),
       }
     }
     catch (error) {
