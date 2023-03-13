@@ -20,7 +20,7 @@
       "require": "./dist/lib/index.js",
       "import": "./dist/es/index.js"
     },
-    "./styles.css": "./dist/es/style.css"
+    "./styles.css": "./dist/style.css"
   },
   "main": "dist/lib/index.js",
   "module": "dist/es/index.js",
@@ -29,8 +29,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "nr build --mode development --watch",
-    "build": "vite build --mode production",
+    "dev": "rimraf dist && nr build --mode development --watch",
+    "build": "rimraf dist && vite build --mode production",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
@@ -39,9 +39,12 @@
   "devDependencies": {
     "@codemirror/lang-javascript": "^6.1.4",
     "@codemirror/theme-one-dark": "^6.1.1",
+    "@types/fs-extra": "^11.0.1",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vueuse/core": "^9.13.0",
+    "fs-extra": "^11.1.0",
     "nanoid": "4.0.1",
+    "pretty-format": "^29.5.0",
     "sass": "^1.59.2",
     "vite": "^4.1.4",
     "vite-plugin-dts": "^2.1.0",

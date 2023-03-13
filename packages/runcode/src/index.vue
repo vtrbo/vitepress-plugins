@@ -68,13 +68,15 @@ import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { useClipboard, useFetch } from '@vueuse/core'
-import { nanoid } from 'nanoid'
+import { useClipboard } from '@vueuse/core'
 import { removeHtmlTag, throwError } from './utils'
+import { tsExecutor } from './executor/tsExec'
 import IconRun from './icons/run.svg'
 import IconSet from './icons/set.svg'
 import IconCode from './icons/code.svg'
 import IconCopy from './icons/copy.svg'
+
+type Language = 'js' | 'ts'
 
 interface RunCodeProps {
   /**
@@ -82,7 +84,7 @@ interface RunCodeProps {
    *
    * default 'js'
    */
-  language: 'js' | 'ts'
+  language: Language
 
   /**
    * 唯一标识
@@ -155,7 +157,7 @@ const collapsable = ref<boolean>(props.collapsable)
 /**
  * 编辑区主题
  */
-const themeMap = {
+const themeMap: Record<Language, any> = {
   js: javascript,
   ts: javascript,
 }
@@ -175,6 +177,14 @@ const mirror = ref<{
   height: '0px',
   theme: [javascript(), oneDark],
 })
+
+/**
+ * 执行器数据
+ */
+const exectorMap: Record<Language, any> = {
+  js: tsExecutor,
+  ts: tsExecutor,
+}
 
 /**
  * 输出数据
@@ -236,9 +246,17 @@ const getCode = () => {
   const tags = refCode.value!.getElementsByTagName('pre')
   if ((tags || []).length) {
     // 抛出无元素错误
+    output.result = '[加载错误]：未找到承载代码的元素'
+    output.loading = false
+    throwError(output.result)
+    return ''
   }
   if ((tags || []).length !== 1) {
     // 抛出元素过多错误
+    output.result = '[加载错误]：承载代码的元素过多'
+    output.loading = false
+    throwError(output.result)
+    return ''
   }
   return removeHtmlTag(tags[0].innerHTML, true)
 }
@@ -250,9 +268,17 @@ const getHeight = () => {
   const tags = refMirror.value!.getElementsByClassName('cm-editor')
   if ((tags || []).length) {
     // 抛出无元素错误
+    output.result = '[加载错误]：未找到承载代码的元素'
+    output.loading = false
+    throwError(output.result)
+    return 0
   }
   if ((tags || []).length !== 1) {
     // 抛出元素过多错误
+    output.result = '[加载错误]：承载代码的元素过多'
+    output.loading = false
+    throwError(output.result)
+    return 0
   }
   return tags[0].clientHeight
 }
@@ -297,31 +323,15 @@ const handleRun = () => {
     return
 
   output.loading = true
-  const params = {
-    symbolize: props.symbolize || nanoid(8),
-    language: props.language,
-    wholdCode: `${props.dependency}\n${mirror.value.code}`,
-  }
-
-  // node层只是包装了返回值
-  // 代码部分在 packages/nginx
-  const ipAddress = import.meta.env.VITE_BUILD_MODE === 'dev' ? 'http://localhost:9999' : 'https://nginx.vtrbo.cn'
-  useFetch(`${ipAddress}/vps/runcode`, {
-    onFetchError(ctx) {
-      output.result = '[运行错误]：网络连接不畅或其他未知错误'
-      output.loading = false
-      throwError(output.result)
-      return ctx
-    },
-  }).post(params).json().then((res) => {
-    if (res.data.value.status === 'error') {
-      output.result = '[运行错误]：请检查代码是否错误'
-      output.loading = false
-      return throwError(output.result)
-    }
-    output.result = res.data.value.output
+  const wholeCode = `${props.dependency}\n${mirror.value.code}`
+  const res = exectorMap[props.language](wholeCode)
+  if (res.status === 'error') {
+    output.result = '[运行错误]：请检查代码是否错误'
     output.loading = false
-  })
+    return throwError(output.result)
+  }
+  output.result = `${res.output}`
+  output.loading = false
 }
 
 /**
