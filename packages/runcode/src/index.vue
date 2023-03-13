@@ -244,7 +244,7 @@ watch(
  */
 const getCode = () => {
   const tags = refCode.value!.getElementsByTagName('pre')
-  if ((tags || []).length) {
+  if (!(tags || []).length) {
     // 抛出无元素错误
     output.result = '[加载错误]：未找到承载代码的元素'
     output.loading = false
@@ -266,9 +266,9 @@ const getCode = () => {
  */
 const getHeight = () => {
   const tags = refMirror.value!.getElementsByClassName('cm-editor')
-  if ((tags || []).length) {
+  if (!(tags || []).length) {
     // 抛出无元素错误
-    output.result = '[加载错误]：未找到承载代码的元素'
+    output.result = '[加载错误]：未找到承载代码的元素高度'
     output.loading = false
     throwError(output.result)
     return 0

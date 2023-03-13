@@ -12,16 +12,24 @@ export default defineConfig({
       copyDtsFiles: false,
       skipDiagnostics: true,
     }),
+    {
+      name: 'custom-remove-style',
+      buildStart() {
+        removeStyle()
+      },
+    },
+    {
+      name: 'custom-copy-style',
+      closeBundle() {
+        copyStyle()
+      },
+    },
   ],
   build: {
-    watch: {},
     target: 'modules',
     minify: true,
     emptyOutDir: true,
     rollupOptions: {
-      watch: {
-        exclude: 'dist/**',
-      },
       external: ['vue', '@vueuse/core'],
       input: 'src/index.ts',
       output: [
@@ -42,21 +50,30 @@ export default defineConfig({
           dir: 'dist/lib',
         },
       ],
-      plugins: [
-        {
-          name: 'style-move',
-          writeBundle() {
-            fs.existsSync('dist/es/style.css') && fs.renameSync('dist/es/style.css', 'dist/style.css')
-            fs.existsSync('dist/lib/style.css') && fs.renameSync('dist/lib/style.css', 'dist/style.css')
-          },
-        },
-      ],
     },
     lib: {
       entry: 'src/index.ts',
     },
   },
-  optimizeDeps: {
-    exclude: ['dist/**'],
-  },
 })
+
+/**
+ * 移除样式文件
+ */
+function removeStyle() {
+  fs.existsSync('dist/style.css') && fs.unlinkSync('dist/style.css')
+}
+
+/**
+ * 复制样式文件
+ */
+function copyStyle() {
+  if (fs.existsSync('dist/es/style.css')) {
+    removeStyle()
+    fs.renameSync('dist/es/style.css', 'dist/style.css')
+  }
+  if (fs.existsSync('dist/lib/style.css')) {
+    removeStyle()
+    fs.renameSync('dist/lib/style.css', 'dist/style.css')
+  }
+}

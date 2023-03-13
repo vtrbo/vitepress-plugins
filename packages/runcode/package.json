@@ -29,8 +29,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "rimraf dist && nr build --mode development --watch",
-    "build": "rimraf dist && vite build --mode production",
+    "dev": "rimraf dist && nr build --watch",
+    "build": "rimraf dist && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
