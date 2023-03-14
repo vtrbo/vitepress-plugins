@@ -56,7 +56,7 @@ export default defineConfig({
         {
           format: 'es',
           exports: 'named',
-          entryFileNames: '[name].js',
+          entryFileNames: '[name].mjs',
           preserveModules: true,
           preserveModulesRoot: 'src',
           dir: ES_DIR,
@@ -64,7 +64,7 @@ export default defineConfig({
         {
           format: 'cjs',
           exports: 'named',
-          entryFileNames: '[name].js',
+          entryFileNames: '[name].cjs',
           preserveModules: true,
           preserveModulesRoot: 'src',
           dir: LIB_DIR,
