@@ -9,7 +9,7 @@ const DIST_DIR = 'dist'
 const ES_DIR = `${DIST_DIR}/es`
 const LIB_DIR = `${DIST_DIR}/lib`
 const STYLE_FILE = `${DIST_DIR}/style.css`
-const EXTERNALS = [
+const EXTERNALS: string[] = [
   'vue',
   '@vueuse/core',
   'vue-codemirror',
