@@ -12,10 +12,10 @@ const STYLE_FILE = `${DIST_DIR}/style.css`
 const EXTERNALS: string[] = [
   'vue',
   '@vueuse/core',
-  'vue-codemirror',
   '@codemirror/lang-javascript',
   '@codemirror/theme-one-dark',
   'pretty-format',
+  'vue-codemirror',
   'typescript',
 ]
 
@@ -60,15 +60,6 @@ export default defineConfig({
           preserveModules: true,
           preserveModulesRoot: 'src',
           dir: ES_DIR,
-          globals: {
-            'vue': 'vue',
-            '@vueuse/core': '@vueuse/core',
-            'vue-codemirror': 'vue-codemirror',
-            '@codemirror/lang-javascript': '@codemirror/lang-javascript',
-            '@codemirror/theme-one-dark': '@codemirror/theme-one-dark',
-            'pretty-format': 'pretty-format',
-            'typescript': 'typescript',
-          },
         },
         {
           format: 'cjs',
@@ -77,15 +68,6 @@ export default defineConfig({
           preserveModules: true,
           preserveModulesRoot: 'src',
           dir: LIB_DIR,
-          globals: {
-            'vue': 'vue',
-            '@vueuse/core': '@vueuse/core',
-            'vue-codemirror': 'vue-codemirror',
-            '@codemirror/lang-javascript': '@codemirror/lang-javascript',
-            '@codemirror/theme-one-dark': '@codemirror/theme-one-dark',
-            'pretty-format': 'pretty-format',
-            'typescript': 'typescript',
-          },
         },
       ],
     },
