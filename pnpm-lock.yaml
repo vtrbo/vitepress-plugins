@@ -4,17 +4,17 @@ importers:
 
   .:
     specifiers:
-      '@types/node': ^18.15.0
+      '@types/node': ^18.15.3
       '@vtrbo/eslint-config': 0.2.2
       '@vtrbo/ni': ^0.1.0
-      '@vtrbo/utils': ^0.3.0
+      '@vtrbo/utils': ^0.3.2
       '@vue/compiler-sfc': ^3.2.47
       bumpp: ^9.0.0
       eslint: ^8.36.0
       pnpm: ^7.29.1
       rimraf: ^4.4.0
       typescript: ^4.9.5
-      vitepress: 1.0.0-alpha.51
+      vitepress: 1.0.0-alpha.58
       vitepress-plugin-runcode: workspace:*
     devDependencies:
       '@types/node': 18.15.3
@@ -27,7 +27,7 @@ importers:
       pnpm: 7.29.2
       rimraf: 4.4.0
       typescript: 4.9.5
-      vitepress: 1.0.0-alpha.51_tdye2wdbelwrh2kwavsh7f7fh4
+      vitepress: 1.0.0-alpha.58_tdye2wdbelwrh2kwavsh7f7fh4
       vitepress-plugin-runcode: link:packages/runcode
 
   packages/runcode:
@@ -3632,8 +3632,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitepress/1.0.0-alpha.51_tdye2wdbelwrh2kwavsh7f7fh4:
-    resolution: {integrity: sha512-euZpjXeIaNUadLAQtd7NYbKhJJoDyZ6z8YK77qlM2c6NvUB5wmLPU6moP4rfcKUqpBDrsrxjJS6fdPk6azS5qQ==}
+  /vitepress/1.0.0-alpha.58_tdye2wdbelwrh2kwavsh7f7fh4:
+    resolution: {integrity: sha512-aENSAiE2uKMoQPwBTELY8Nig5qSWrmAl+MgsO3l/TE8At6kXii+2rseEId/bVfT700JeucYdqtCgWxu+LwpYIw==}
     hasBin: true
     dependencies:
       '@docsearch/css': 3.3.3
