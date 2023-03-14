@@ -65,7 +65,7 @@
 
 <script lang="ts" setup>
 import { nextTick, onMounted, reactive, ref, watch } from 'vue'
-import { Codemirror } from 'vue-codemirror'
+import vueCodemirror from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useClipboard } from '@vueuse/core'
@@ -128,6 +128,8 @@ const props = withDefaults(
     dependency: '',
   },
 )
+
+const { Codemirror } = vueCodemirror
 
 /**
  * 承载代码元素

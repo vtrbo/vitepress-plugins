@@ -1,5 +1,6 @@
 {
   "name": "vitepress-plugin-runcode",
+  "type": "module",
   "version": "0.1.8",
   "description": "Victor Bo's Vitepress Plugins RunCode.",
   "author": {
@@ -38,6 +39,7 @@
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.4",
     "@codemirror/theme-one-dark": "^6.1.1",
+    "@vueuse/core": "^9.13.0",
     "pretty-format": "^29.5.0",
     "typescript": "^4.9.5",
     "vue-codemirror": "^6.1.1"
@@ -45,7 +47,6 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@vitejs/plugin-vue": "^4.0.0",
-    "@vueuse/core": "^9.13.0",
     "fs-extra": "^11.1.0",
     "nanoid": "4.0.1",
     "sass": "^1.59.2",
