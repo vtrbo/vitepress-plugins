@@ -55,7 +55,6 @@
         />
       </div>
     </div>
-
     <!-- 源码 页面不可见 -->
     <div ref="refCode" class="VppSource">
       <slot />
@@ -65,10 +64,11 @@
 
 <script lang="ts" setup>
 import { nextTick, onMounted, reactive, ref, watch } from 'vue'
-import vueCodemirror from 'vue-codemirror'
+import { Codemirror } from '@vtrbo/codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useClipboard } from '@vueuse/core'
+import type { Executor } from './executor/types'
 import { removeHtmlTag, throwError } from './utils'
 import { tsExecutor } from './executor/tsExec'
 import IconRun from './icons/run.svg'
@@ -129,8 +129,6 @@ const props = withDefaults(
   },
 )
 
-const { Codemirror } = vueCodemirror
-
 /**
  * 承载代码元素
  * 仅获取运行代码
@@ -151,9 +149,13 @@ const collapsable = ref<boolean>(props.collapsable)
 /**
  * 编辑区主题
  */
-const themeMap: Record<Language, any> = {
+const LANG_SUPPORT: Record<Language, any> = {
   js: javascript,
   ts: javascript,
+}
+const LANG_PRESET: Record<Language, Record<string, any>> = {
+  js: { typescript: false },
+  ts: { typescript: true },
 }
 
 /**
@@ -169,13 +171,13 @@ const mirror = ref<{
 }>({
   code: '',
   height: '0px',
-  theme: [javascript(), oneDark],
+  theme: [LANG_SUPPORT[props.language](LANG_PRESET[props.language]), oneDark],
 })
 
 /**
  * 执行器数据
  */
-const exectorMap: Record<Language, any> = {
+const exectorMap: Record<Language, (code: string) => Executor> = {
   js: tsExecutor,
   ts: tsExecutor,
 }
@@ -219,8 +221,8 @@ onMounted(() => {
     computeHeight()
   })
 
-  // 设置主题
-  mirror.value.theme = [themeMap[props.language](), oneDark]
+  // // 设置主题
+  // mirror.value.lang = langMap[props.language](langParam[props.language]) as any
 
   // 初始自动执行
   props.initable && handleRun()

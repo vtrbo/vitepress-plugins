@@ -1,12 +1,13 @@
 import ts from 'typescript'
-import { stringify } from '../stringify'
+import { stringify } from '../utils'
+import type { Executor } from './types'
 
 /**
  * 执行 js/ts 代码
  * @param code 代码
  * @returns 执行结果
  */
-export function tsExecutor(code: string) {
+export function tsExecutor(code: string): Executor {
   try {
     const transpileOutput = ts.transpileModule(
       code,
@@ -53,14 +54,14 @@ return output;
     catch (error) {
       return {
         status: 'error',
-        error,
+        error: error as Error,
       }
     }
   }
   catch (error) {
     return {
       status: 'error',
-      error,
+      error: error as Error,
     }
   }
 }

@@ -10,13 +10,13 @@ const ES_DIR = `${DIST_DIR}/es`
 const LIB_DIR = `${DIST_DIR}/lib`
 const STYLE_FILE = `${DIST_DIR}/style.css`
 const EXTERNALS: string[] = [
-  'vue',
-  '@vueuse/core',
   '@codemirror/lang-javascript',
   '@codemirror/theme-one-dark',
+  '@vtrbo/codemirror',
+  '@vueuse/core',
   'pretty-format',
-  'vue-codemirror',
   'typescript',
+  'vue',
 ]
 
 export default defineConfig({

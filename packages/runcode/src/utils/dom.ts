@@ -1,12 +1,4 @@
 /**
- * 处理异常消息
- * @param message 异常消息
- */
-export const throwError = (message: string) => {
-  return new Error(`[vitepress:plugin:runcode]: ${message}`)
-}
-
-/**
  * UBB 转 HTML
  * @param code ubb 代码
  * @returns html 代码
@@ -39,8 +31,4 @@ export const removeHtmlTag = (code: string, isUbb?: boolean): string => {
   if (isUbb)
     code = ubbToHtml(code)
   return code.replace(/<\/?[^>]*>/g, '')
-}
-
-export const runTs = (code: string) => {
-
 }
