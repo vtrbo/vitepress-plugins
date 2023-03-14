@@ -87,13 +87,6 @@ interface RunCodeProps {
   language: Language
 
   /**
-   * 唯一标识
-   *
-   * default 唯一随机8位字符
-   */
-  symbolize?: string
-
-  /**
    * 是否初始执行
    * true执行 false不执行
    *
@@ -129,7 +122,6 @@ const props = withDefaults(
   defineProps<RunCodeProps>(),
   {
     language: 'js',
-    symbolize: '',
     initable: true,
     editable: true,
     collapsable: true,
@@ -308,7 +300,7 @@ const handleCopy = () => {
   if (tooltip.value === '已复制')
     return
   const { copy } = useClipboard()
-  copy(getCode())
+  copy(mirror.value.code)
   tooltip.value = '已复制'
   setTimeout(() => {
     tooltip.value = '复制代码'
