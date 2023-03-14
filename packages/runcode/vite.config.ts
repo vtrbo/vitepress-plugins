@@ -3,34 +3,54 @@ import fs from 'fs-extra'
 import VueSfc from '@vitejs/plugin-vue'
 import viteDts from 'vite-plugin-dts'
 
+const PLUGIN_NAME = 'custom-mover-style'
+const OUTPUT_DIR = 'dist/dts'
+const DIST_DIR = 'dist'
+const ES_DIR = `${DIST_DIR}/es`
+const LIB_DIR = `${DIST_DIR}/lib`
+const STYLE_FILE = `${DIST_DIR}/style.css`
+const EXTERNALS = [
+  'vue',
+  '@vueuse/core',
+  'vue-codemirror',
+  '@codemirror/lang-javascript',
+  '@codemirror/theme-one-dark',
+  'pretty-format',
+  'typescript',
+]
+
 export default defineConfig({
   plugins: [
     VueSfc(),
     viteDts({
-      outputDir: 'dist/dts',
+      outputDir: OUTPUT_DIR,
       insertTypesEntry: true,
       copyDtsFiles: false,
       skipDiagnostics: true,
     }),
     {
-      name: 'custom-remove-style',
+      name: PLUGIN_NAME,
       buildStart() {
-        removeStyle()
+        fs.existsSync(STYLE_FILE) && fs.unlinkSync(STYLE_FILE)
       },
-    },
-    {
-      name: 'custom-copy-style',
       closeBundle() {
-        copyStyle()
+        if (fs.existsSync(`${ES_DIR}/style.css`))
+          fs.renameSync(`${ES_DIR}/style.css`, STYLE_FILE)
+
+        if (fs.existsSync(`${LIB_DIR}/style.css`))
+          fs.renameSync(`${LIB_DIR}/style.css`, STYLE_FILE)
       },
     },
   ],
   build: {
-    target: 'modules',
+    target: 'esnext',
     minify: true,
     emptyOutDir: true,
+    modulePreload: {
+      polyfill: false,
+    },
     rollupOptions: {
-      external: ['vue', '@vueuse/core'],
+      external: EXTERNALS,
       input: 'src/index.ts',
       output: [
         {
@@ -39,7 +59,7 @@ export default defineConfig({
           entryFileNames: '[name].js',
           preserveModules: true,
           preserveModulesRoot: 'src',
-          dir: 'dist/es',
+          dir: ES_DIR,
         },
         {
           format: 'cjs',
@@ -47,7 +67,7 @@ export default defineConfig({
           entryFileNames: '[name].js',
           preserveModules: true,
           preserveModulesRoot: 'src',
-          dir: 'dist/lib',
+          dir: LIB_DIR,
         },
       ],
     },
@@ -56,24 +76,3 @@ export default defineConfig({
     },
   },
 })
-
-/**
- * 移除样式文件
- */
-function removeStyle() {
-  fs.existsSync('dist/style.css') && fs.unlinkSync('dist/style.css')
-}
-
-/**
- * 复制样式文件
- */
-function copyStyle() {
-  if (fs.existsSync('dist/es/style.css')) {
-    removeStyle()
-    fs.renameSync('dist/es/style.css', 'dist/style.css')
-  }
-  if (fs.existsSync('dist/lib/style.css')) {
-    removeStyle()
-    fs.renameSync('dist/lib/style.css', 'dist/style.css')
-  }
-}
