@@ -1,4 +1,3 @@
-<!-- 运行组件模型 -->
 <template>
   <div class="VppRuncode">
     <div class="VppOutput">
@@ -33,7 +32,7 @@
       <div class="VppOperateCenter" />
 
       <div class="VppOperateRight">
-        <div class="VppOperateButton" @click="output.loading ? () => {} : handleRun()">
+        <div class="VppOperateButton" @click="output.loading ? noop() : handleRun()">
           <img :src="IconRun">
           <span class="VppOperateTooltip">开始执行</span>
         </div>
@@ -65,6 +64,7 @@
 <script lang="ts" setup>
 import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { Codemirror } from '@vtrbo/codemirror'
+import { noop } from '@vtrbo/utils/fn'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useClipboard } from '@vueuse/core'
@@ -220,9 +220,6 @@ onMounted(() => {
     // 计算高度
     computeHeight()
   })
-
-  // // 设置主题
-  // mirror.value.lang = langMap[props.language](langParam[props.language]) as any
 
   // 初始自动执行
   props.initable && handleRun()

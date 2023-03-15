@@ -1,78 +1,37 @@
 import { defineConfig } from 'vite'
-import fs from 'fs-extra'
 import VueSfc from '@vitejs/plugin-vue'
 import viteDts from 'vite-plugin-dts'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
-const PLUGIN_NAME = 'custom-mover-style'
-const OUTPUT_DIR = 'dist/dts'
 const DIST_DIR = 'dist'
-const ES_DIR = `${DIST_DIR}/es`
-const LIB_DIR = `${DIST_DIR}/lib`
-const STYLE_FILE = `${DIST_DIR}/style.css`
-const EXTERNALS: string[] = [
-  '@codemirror/lang-javascript',
-  '@codemirror/theme-one-dark',
-  '@vtrbo/codemirror',
-  '@vueuse/core',
-  'pretty-format',
-  'typescript',
-  'vue',
-]
+const DTS_DIR = `${DIST_DIR}/dts`
 
 export default defineConfig({
   plugins: [
     VueSfc(),
+    nodePolyfills(),
     viteDts({
-      outputDir: OUTPUT_DIR,
+      outputDir: DTS_DIR,
       insertTypesEntry: true,
-      copyDtsFiles: false,
-      skipDiagnostics: true,
     }),
-    {
-      name: PLUGIN_NAME,
-      buildStart() {
-        fs.existsSync(STYLE_FILE) && fs.unlinkSync(STYLE_FILE)
-      },
-      closeBundle() {
-        if (fs.existsSync(`${ES_DIR}/style.css`))
-          fs.renameSync(`${ES_DIR}/style.css`, STYLE_FILE)
-
-        if (fs.existsSync(`${LIB_DIR}/style.css`))
-          fs.renameSync(`${LIB_DIR}/style.css`, STYLE_FILE)
-      },
-    },
   ],
   build: {
-    target: 'esnext',
-    minify: true,
+    outDir: DIST_DIR,
     emptyOutDir: true,
-    modulePreload: {
-      polyfill: false,
+    lib: {
+      name: 'VPR',
+      fileName: 'index',
+      entry: 'src/index.ts',
+      formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      external: EXTERNALS,
-      input: 'src/index.ts',
-      output: [
-        {
-          format: 'es',
-          exports: 'named',
-          entryFileNames: '[name].mjs',
-          preserveModules: true,
-          preserveModulesRoot: 'src',
-          dir: ES_DIR,
-        },
-        {
-          format: 'cjs',
-          exports: 'named',
-          entryFileNames: '[name].cjs',
-          preserveModules: true,
-          preserveModulesRoot: 'src',
-          dir: LIB_DIR,
-        },
-      ],
+      external: ['vue', '@vueuse/core'],
+      output: {
+        exports: 'named',
+      },
     },
-    lib: {
-      entry: 'src/index.ts',
+    modulePreload: {
+      polyfill: false,
     },
   },
 })

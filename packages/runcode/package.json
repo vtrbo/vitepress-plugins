@@ -17,13 +17,13 @@
   "exports": {
     ".": {
       "type": "./dist/index.d.ts",
-      "require": "./dist/lib/index.cjs",
-      "import": "./dist/es/index.mjs"
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
     },
     "./styles.css": "./dist/style.css"
   },
   "main": "dist/lib/index.cjs",
-  "module": "dist/es/index.mjs",
+  "module": "dist/es/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -36,25 +36,18 @@
     "typecheck": "tsc --noEmit",
     "release": "pnpm publish --access public"
   },
-  "peerDependencies": {
-    "vue": "3.x"
-  },
-  "dependencies": {
+  "devDependencies": {
     "@codemirror/lang-javascript": "^6.1.4",
     "@codemirror/theme-one-dark": "^6.1.1",
+    "@vitejs/plugin-vue": "^4.0.0",
     "@vtrbo/codemirror": "0.0.1-beta.0",
     "@vueuse/core": "^9.13.0",
     "pretty-format": "^29.5.0",
-    "typescript": "^4.9.5"
-  },
-  "devDependencies": {
-    "@types/fs-extra": "^11.0.1",
-    "@vitejs/plugin-vue": "^4.0.0",
-    "fs-extra": "^11.1.0",
-    "nanoid": "4.0.1",
     "sass": "^1.59.2",
+    "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vite-plugin-dts": "^2.1.0",
+    "vite-plugin-node-polyfills": "^0.7.0",
     "vue": "^3.2.47"
   }
 }

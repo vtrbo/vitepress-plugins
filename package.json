@@ -16,8 +16,8 @@
     "typecheck": "tsc --noEmit",
     "prepare": "pnpm -r run build",
     "release": "bumpp package.json packages/*/package.json --commit --push --tag && pnpm -r run release",
-    "runcode": "nr -C packages/runcode dev",
-    "nginx": "nr -C packages/nginx start"
+    "rc:dev": "nr -C packages/runcode dev",
+    "rc:build": "nr -C packages/runcode build"
   },
   "devDependencies": {
     "@types/node": "^18.15.3",
