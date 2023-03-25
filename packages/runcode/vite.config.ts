@@ -12,6 +12,10 @@ export default defineConfig({
     nodePolyfills(),
     viteDts({
       outputDir: DTS_DIR,
+      include: [
+        'src/**/*.ts',
+        'src/**/*.vue',
+      ],
       insertTypesEntry: true,
     }),
   ],
@@ -25,9 +29,16 @@ export default defineConfig({
       formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      external: ['vue', '@vueuse/core'],
+      external: [
+        '@vueuse/core',
+        'vue',
+      ],
       output: {
         exports: 'named',
+        manualChunks: {
+          '@vtrbo/codemirror': ['@vtrbo/codemirror'],
+          '@vtrbo/utils': ['@vtrbo/utils'],
+        },
       },
     },
     modulePreload: {

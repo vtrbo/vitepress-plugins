@@ -68,15 +68,12 @@ import { noop } from '@vtrbo/utils/fn'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useClipboard } from '@vueuse/core'
-import type { Executor } from './executor/types'
 import { removeHtmlTag, throwError } from './utils'
 import { tsExecutor } from './executor/tsExec'
 import IconRun from './icons/run.svg'
 import IconSet from './icons/set.svg'
 import IconCode from './icons/code.svg'
 import IconCopy from './icons/copy.svg'
-
-type Language = 'js' | 'ts'
 
 interface RunCodeProps {
   /**

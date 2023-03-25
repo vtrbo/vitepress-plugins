@@ -1,6 +1,5 @@
-import ts from 'typescript'
+import { ModuleKind, ScriptTarget, transpileModule } from 'typescript'
 import { stringify } from '../utils'
-import type { Executor } from './types'
 
 /**
  * 执行 js/ts 代码
@@ -9,12 +8,12 @@ import type { Executor } from './types'
  */
 export function tsExecutor(code: string): Executor {
   try {
-    const transpileOutput = ts.transpileModule(
+    const transpileOutput = transpileModule(
       code,
       {
         compilerOptions: {
-          target: ts.ScriptTarget.ES2015,
-          module: ts.ModuleKind.None,
+          target: ScriptTarget.ES2015,
+          module: ModuleKind.None,
         },
       },
     )
