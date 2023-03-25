@@ -67,9 +67,9 @@ import { Codemirror } from '@vtrbo/codemirror'
 import { noop } from '@vtrbo/utils/fn'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { useClipboard } from '@vueuse/core'
-import { removeHtmlTag, throwError } from './utils'
-import { tsExecutor } from './executor/tsExec'
+import { useClipboard, useFetch } from '@vueuse/core'
+import { removeHtmlTag } from './utils/dom'
+import { throwError } from './utils/throw'
 import IconRun from './icons/run.svg'
 import IconSet from './icons/set.svg'
 import IconCode from './icons/code.svg'
@@ -170,14 +170,6 @@ const mirror = ref<{
   height: '0px',
   theme: [LANG_SUPPORT[props.language](LANG_PRESET[props.language]), oneDark],
 })
-
-/**
- * 执行器数据
- */
-const exectorMap: Record<Language, (code: string) => Executor> = {
-  js: tsExecutor,
-  ts: tsExecutor,
-}
 
 /**
  * 输出数据
@@ -314,14 +306,28 @@ const handleRun = () => {
 
   output.loading = true
   const wholeCode = `${props.dependency}\n${mirror.value.code}`
-  const res = exectorMap[props.language](wholeCode)
-  if (res.status === 'error') {
-    output.result = '[运行错误]：请检查代码是否错误'
-    output.loading = false
-    return throwError(output.result)
+  const ipAddress = import.meta.env.VITE_BUILD_MODE === 'dev' ? 'http://localhost:9999' : 'https://nginx.vtrbo.cn'
+  const params = {
+    lang: props.language,
+    code: wholeCode,
   }
-  output.result = `${res.output}`
-  output.loading = false
+
+  useFetch(`${ipAddress}/vps/runcode`, {
+    onFetchError(ctx) {
+      output.result = '[运行错误]：网络连接不畅或其他未知错误'
+      output.loading = false
+      throwError(output.result)
+      return ctx
+    },
+  }).post(params).json().then((res) => {
+    if (res.data.value.status === 'error') {
+      output.result = '[运行错误]：请检查代码是否错误'
+      output.loading = false
+      return throwError(output.result)
+    }
+    output.result = res.data.value.output
+    output.loading = false
+  })
 }
 
 /**

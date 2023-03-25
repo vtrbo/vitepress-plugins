@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import VueSfc from '@vitejs/plugin-vue'
 import viteDts from 'vite-plugin-dts'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 const DIST_DIR = 'dist'
 const DTS_DIR = `${DIST_DIR}/dts`
@@ -9,7 +8,6 @@ const DTS_DIR = `${DIST_DIR}/dts`
 export default defineConfig({
   plugins: [
     VueSfc(),
-    nodePolyfills(),
     viteDts({
       outputDir: DTS_DIR,
       include: [
@@ -36,6 +34,8 @@ export default defineConfig({
       output: {
         exports: 'named',
         manualChunks: {
+          '@codemirror/lang-javascript': ['@codemirror/lang-javascript'],
+          '@codemirror/theme-one-dark': ['@codemirror/theme-one-dark'],
           '@vtrbo/codemirror': ['@vtrbo/codemirror'],
           '@vtrbo/utils': ['@vtrbo/utils'],
         },

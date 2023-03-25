@@ -2,8 +2,7 @@
  * @vitest/utils
  * https://github.com/vitest-dev/vitest/blob/main/packages/utils/src/stringify.ts
  */
-import type { PrettyFormatOptions } from 'pretty-format'
-import { format as prettyFormat, plugins as prettyFormatPlugins } from 'pretty-format'
+const pretty = require('pretty-format')
 
 const {
   AsymmetricMatcher,
@@ -12,7 +11,7 @@ const {
   Immutable,
   ReactElement,
   ReactTestComponent,
-} = prettyFormatPlugins
+} = pretty.plugins
 
 const PLUGINS = [
   ReactTestComponent,
@@ -23,25 +22,23 @@ const PLUGINS = [
   AsymmetricMatcher,
 ]
 
-export function stringify(object: unknown, maxDepth = 10, { maxLength, ...options }: PrettyFormatOptions & { maxLength?: number } = {}): string {
+function stringify(object, maxDepth = 10, { maxLength, ...options } = {}) {
   const MAX_LENGTH = maxLength ?? 10000
   let result
 
   try {
-    result = prettyFormat(object, {
+    result = pretty.format(object, {
       maxDepth,
       escapeString: false,
-      // min: true,
       plugins: PLUGINS,
       ...options,
     })
   }
   catch {
-    result = prettyFormat(object, {
+    result = pretty.format(object, {
       callToJSON: false,
       maxDepth,
       escapeString: false,
-      // min: true,
       plugins: PLUGINS,
       ...options,
     })
@@ -51,3 +48,5 @@ export function stringify(object: unknown, maxDepth = 10, { maxLength, ...option
     ? stringify(object, Math.floor(maxDepth / 2))
     : result
 }
+
+module.exports = stringify

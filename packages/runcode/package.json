@@ -29,8 +29,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite build --watch",
-    "build": "vite build",
+    "dev": "vite build --mode development --watch",
+    "build": "vite build --mode production",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
@@ -44,12 +44,10 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
     "@vueuse/core": "^9.13.0",
-    "pretty-format": "^29.5.0",
     "sass": "^1.59.2",
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vite-plugin-dts": "^2.1.0",
-    "vite-plugin-node-polyfills": "^0.7.0",
     "vue": "^3.2.47"
   }
 }

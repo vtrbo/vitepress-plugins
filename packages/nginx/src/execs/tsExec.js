@@ -1,19 +1,14 @@
-import { ModuleKind, ScriptTarget, transpileModule } from 'typescript'
-import { stringify } from '../utils'
+const ts = require('typescript')
+const stringify = require('../utils/stringify')
 
-/**
- * 执行 js/ts 代码
- * @param code 代码
- * @returns 执行结果
- */
-export function tsExecutor(code: string): Executor {
+function tsExec(code) {
   try {
-    const transpileOutput = transpileModule(
+    const transpileOutput = ts.transpileModule(
       code,
       {
         compilerOptions: {
-          target: ScriptTarget.ES2015,
-          module: ModuleKind.None,
+          target: ts.ScriptTarget.ES2015,
+          module: ts.ModuleKind.None,
         },
       },
     )
@@ -47,20 +42,22 @@ return output;
       const consoleOutputs = new Function(reConsoleCode)()
       return {
         status: 'success',
-        output: consoleOutputs.map((m: any) => stringify(m)).join('\n'),
+        output: consoleOutputs.map(m => stringify(m)).join('\n'),
       }
     }
     catch (error) {
       return {
         status: 'error',
-        error: error as Error,
+        error,
       }
     }
   }
   catch (error) {
     return {
       status: 'error',
-      error: error as Error,
+      error,
     }
   }
 }
+
+module.exports = tsExec
