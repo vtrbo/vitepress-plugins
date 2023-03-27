@@ -1,7 +1,7 @@
 /**
  * 校验是否是 HTTPS
  */
-function isHttps(): boolean {
+export function isHttps(): boolean {
   const protocol = window.location.protocol
   if (protocol === 'https:') {
     return true
