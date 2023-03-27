@@ -306,7 +306,7 @@ const handleRun = () => {
 
   output.loading = true
   const wholeCode = `${props.dependency}\n${mirror.value.code}`
-  const ipAddress = import.meta.env.VITE_BUILD_MODE === 'dev' ? 'http://localhost:9999' : 'https://nginx.vtrbo.cn'
+  const ipAddress = import.meta.env.VITE_BUILD_MODE === 'dev' ? 'http://localhost:9999' : 'http://nginx.vtrbo.cn'
   const params = {
     lang: props.language,
     code: wholeCode,
