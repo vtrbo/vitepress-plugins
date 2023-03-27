@@ -306,13 +306,14 @@ const handleRun = () => {
 
   output.loading = true
   const wholeCode = `${props.dependency}\n${mirror.value.code}`
-  const ipAddress = import.meta.env.VITE_BUILD_MODE === 'dev' ? 'http://localhost:9999' : 'http://nginx.vtrbo.cn'
+  const http = isHttps() ? 'https://' : 'http://'
+  const url = import.meta.env.VITE_BUILD_MODE === 'dev' ? 'localhost:9999' : 'nginx.vtrbo.cn'
   const params = {
     lang: props.language,
     code: wholeCode,
   }
 
-  useFetch(`${ipAddress}/vps/runcode`, {
+  useFetch(`${http}${url}/vps/runcode`, {
     onFetchError(ctx) {
       output.result = '[运行错误]：网络连接不畅或其他未知错误'
       output.loading = false
